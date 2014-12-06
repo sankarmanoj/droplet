@@ -7,7 +7,7 @@ con = msd.connect('192.168.0.100','root',password,'droplet')
 name = raw_input("Enter the name")
 path = raw_input("Enter the path")
 path = path.strip('"')
-tmdb.API_KEY = "85e9737274c1b9e74200668822a9dd6f"
+tmdb.API_KEY = ""
 search = tmdb.Search()
 response = search.movie(query=name)
 s = search.results[0]
