@@ -46,7 +46,7 @@ def meet(drop_uri,send_hash):
     finder = socket(AF_INET, SOCK_DGRAM)
     finder.bind(('', sport))
     start = time.time()
-    dat = ""
+    data = "t"
     global running
     avail_ip=[]
     print "Loop started"
@@ -101,5 +101,8 @@ networks = config()
 i = Thread(target = find, args= (networks,))
 i.start()
 ips= meet(uri,hash)
-download(ips,hash)
+if ips:
+	download(ips,hash)
+else:
+	print "File Not Found"
 sleep(3)
