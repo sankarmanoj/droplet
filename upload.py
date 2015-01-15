@@ -9,16 +9,8 @@ def update_hashes():
 	hashes = file.read().splitlines()[1:]
 	hashes= [hash.split('~') for hash in hashes]
 	file.close()
+	print hashes
 	return hashes
-
-
-sent= 0
-
-def send(c,data,size):
-	global sent
-	
-	sent += c.send(data)
-	print (sent*100)/size
 def handler(c):
 	
 	c.send("accepted")
@@ -39,12 +31,11 @@ def handler(c):
 			c.send(name[1])
 			sleep(0.1)
 			while True: 
-				
-				sleep(0.1)
-				data = f.read()
-				if not data:
+				data = f.read(6000000)
+				if data=='':
 					break
-				Thread(target=send(c,data,size)).start()
+				c.sendall(data)
+				print "Sent :",len(data)
 			print "Broke"
 			c.close()
 			f.close()
@@ -65,3 +56,4 @@ def uploader():
 		print "Done handling"
 		
 uploader()
+#python C:\Code\droplet\out.py drop:sha1_hash=d91d0805a09886d8840d2052a86a01c1fac907ef
