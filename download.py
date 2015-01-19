@@ -8,9 +8,10 @@ def send_text(input):
 		input_text = str(input)
 		send_text = input_text + "-"*(send_size-len(input_text))
 		return send_text
-class downloader:
-	peers = []
-	path = "C:\\droplet_alpha\\"
+
+class downloader:  #Class to handle downloads.
+	peers = []  	#List of socket objects
+	path = "C:\\droplet_alpha\\"  #Path to store files in 
 	
 	def __init__(self,ips,hash):
 		self.hash = hash
@@ -23,8 +24,8 @@ class downloader:
 			except:
 				ips.remove(ip)
 	
-	def get_info(self):
-		info_send ="info"
+	def get_info(self):   	#Get the name, and size of the file using the hash
+		info_send ="info" 	# Maybe we can get the name from the web server
 		info_send = info_send + "-"*(send_size-len(info_send))
 		self.peers[0].send(info_send)
 		hash_send = self.hash + "-"*(send_size-len(self.hash))
@@ -35,10 +36,10 @@ class downloader:
 	
 		
 	def open_file(self):
-		self.pieces = []
-		self.piece_number = len(self.peers)
-		self.file = open(self.path + self.file_name,"ab")
-		self.piece_size = int(self.file_size/len(self.peers))
+		self.pieces = []													#Opens the file for writing
+		self.piece_number = len(self.peers)									#Creates a list called pieces which stores start and stop 
+		self.file = open(self.path + self.file_name,"ab")					#positions for downloading the file in pieces
+		self.piece_size = int(self.file_size/len(self.peers))				# max size of each piece is 300 MB
 		if(self.piece_size>314572800):
 			self.piece_number=int(self.file_size/314572800)+1
 			self.piece_size=314572800
@@ -48,8 +49,8 @@ class downloader:
 			self.pieces.append([0,self.file_size])
 		self.pieces[-1][-1]=self.file_size
 		print self.pieces
-	def down_file(self,id_num,peer_num=0):
-		peer = self.peers[peer_num]
+	def down_file(self,id_num,peer_num=0):                              #gets the piece from a peer. 
+		peer = self.peers[peer_num]										#pass the piece number and the peer number
 		peer.send(send_text("init_download"))
 		reply = peer.recv(send_size).strip('-')
 		print reply
