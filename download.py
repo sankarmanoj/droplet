@@ -11,7 +11,13 @@ def send_text(input):
 
 class downloader:  #Class to handle downloads.
 	peers = []  	#List of socket objects
-	path = "C:\\droplet_alpha\\"  #Path to store files in 
+	from sys import platform as _platform
+	if _platform == "linux" or _platform == "linux2":
+		path = "/droplet/"
+	elif _platform == "darwin":
+		path = "/droplet/"
+	elif _platform == "win32":
+		path = "C:\\droplet\\"   #Path to store files in 
 	
 	def __init__(self,ips,hash):
 		self.hash = hash
@@ -19,7 +25,6 @@ class downloader:  #Class to handle downloads.
 			try:
 				s = socket()
 				s.connect((ip,12345))
-				s.settimeout(15)
 				self.peers.append(s)
 			except:
 				ips.remove(ip)
@@ -100,6 +105,11 @@ file1.get_info()
 print file1.file_name
 print file1.file_size
 file1.open_file()
+file1.down_file(0)
+print "got 0"
 file1.down_file(1)
+print "got 1"
+file1.down_file(2)
+print "done"
 		
 	
