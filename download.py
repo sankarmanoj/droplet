@@ -38,7 +38,10 @@ class downloader:  #Class to handle downloads.
 	def open_file(self):
 		self.pieces = []													#Opens the file for writing
 		self.piece_number = len(self.peers)									#Creates a list called pieces which stores start and stop 
-		self.file = open(self.path + self.file_name,"ab")					#positions for downloading the file in pieces
+		try:
+			self.file = open(self.path + self.file_name,"rb+")					#positions for downloading the file in pieces
+		except:
+			self.file = open(self.path + self.file_name,"wb+")
 		self.piece_size = int(self.file_size/len(self.peers))				# max size of each piece is 300 MB
 		if(self.piece_size>314572800):
 			self.piece_number=int(self.file_size/314572800)+1
@@ -89,8 +92,8 @@ class downloader:  #Class to handle downloads.
 		for peer in self.peers:
 			peer.send(quit_send)
 	
-ips = ["192.168.0.3",]
-hash = "812b7aa67bfda826d1520d285864113d0452c774"
+ips = ["192.168.0.5",]
+hash = "24be595dea1df611285e8f2c15f44b19cc4faa9d"
 file1 = downloader(ips,hash)
 file1.get_info()
 
