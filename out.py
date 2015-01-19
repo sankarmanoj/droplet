@@ -15,6 +15,17 @@ if "sha1_hash" in uri:
 else:
 	hash = "**HASH**"
 print "Searching for file with hash :" + hash
+class client:
+	def __init__(self,ip):
+		self.s = socket()
+		self.s.connect((ip,12345))
+		print self.s.recv(1024)
+	def get_file_info(ip,theHash):	
+		self.s.send("info")
+		sleep(0.05)
+		self.s.send(theHash)
+		self.file_size = int(s.recv(1000))
+		self.file_name = s.recv(1000)
 def config():
 	try:
 		file = open("C:/droplet/dpl/networks.txt  ", "r+")
@@ -73,39 +84,32 @@ def meet(drop_uri,send_hash):
 	print "Exit meet"
 	return avail_ip
 	finder.close()
+def down_into(file,toServer,start,end):
+	file.seek(start)
+	toServer.send("start="+str(start))
+	sleep(0.01)
+	toServer.send("end="+ str(end))
+	data = toServer.recv(10000000)
+	file.write(data)
+	return len(data)
+def get_file_info(ip,theHash):
 	
-def download(ips,theHash):
-	s = socket()
-	s.connect((ips[0],12345))
 	print s.recv(1023)
+	s.send("info")
+	sleep(0.05)
 	s.send(theHash)
-	fil = s.recv(1000)
-	file_path = s.recv(1000)
+	file_size = int(s.recv(1000))
 	file_name = s.recv(1000)
-	path = file_path+"/"+"droplet_"+file_name
-	print path
-	f=open(path,'wb+')
-	data =""
-	size = 0
-	done = 0 
-	file_size = int(fil)
-	print file_size
-	print "file size is ",file_size
-	while True:
-		data = s.recv(600000)
-		if data =="":
-			break
-		f.write(data)
-	print "Done Writing"
-	f.close()
-
+	if(file_size=="0"):
+		return 0
+	return (s,file_name,file_size)
 networks = config()
 
 i = Thread(target = find, args= (networks,))
 i.start()
 ips= meet(uri,hash)
-if ips:
-	download(ips,hash)
+for x in range(0,len(ips)):
+	download(ips[x],hash,x,len(ips))
 else:
 	print "File Not Found"
 sleep(3)

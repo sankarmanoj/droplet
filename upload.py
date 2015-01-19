@@ -2,8 +2,10 @@ from socket import *
 import os
 from threading import Thread
 from time import sleep
+import sys
 s= socket()
 port = 12345
+send_size = 500
 def update_hashes():
 	file = open('C:/droplet/dpl/hashes.txt','r')
 	hashes = file.read().splitlines()[1:]
@@ -11,40 +13,67 @@ def update_hashes():
 	file.close()
 	print hashes
 	return hashes
+def send_text(input):
+		input_text = str(input)
+		send_text = input_text + "-"*(send_size-len(input_text))
+		return send_text
 def handler(c):
-	
-	c.send("accepted")
-	hashes = update_hashes()
-	print "Waiting for hash"
-	h= c.recv(1024)
-	print h
-	for hash in hashes:
-		if hash[0] == h:
-			path = hash[1]
-			size = os.path.getsize(path)
-			c.send(str(size))
-			name = os.path.split(path)
-			print name
-			f = open(path,'rb')
-			c.send(name[0])
-			sleep(0.1)
-			c.send(name[1])
-			sleep(0.1)
-			while True: 
-				data = f.read(6000000)
-				if data=='':
-					break
-				c.sendall(data)
-				print "Sent :",len(data)
-			print "Broke"
-			c.close()
-			f.close()
-			sleep(1)
+	sent = 0
+	path = ""
+	available = False
+	while True:
+		command = c.recv(send_size).strip('-')
+		if(command ==""):
 			break
-	
-
-		
- 
+		print command
+		if (command == "info"):
+			hashes = update_hashes()	
+			h = c.recv(send_size).strip('-')
+			for hash in hashes:
+				if hash[0] == h:
+					path = hash[1]
+					available = True
+					size = str(os.path.getsize(path))
+					size_send = size + "-"*(send_size-len(size))
+					c.send(size_send)
+					print size
+					name = os.path.split(path)[-1]
+					print path
+					name_send = name + "-"*(send_size-len(name))
+					c.send(name_send)
+			
+			if not available:
+				c.send("0")
+				sleep(0.1)
+				c.send("0")
+		if(command=="quit"):
+			c.close()
+			break 
+		if(command =="init_download"):
+			print "got init download"
+			seekTo =0 
+			seekRecv = False
+			sizeRecv = False
+			if(path ==""):
+				c.send(send_text('file_not_init'))
+			else:
+				c.send(send_text('ready'))
+				FiletoSend = open(path,'rb')
+				got = c.recv(send_size).strip('-')
+				print got
+				if(got=="seek"):
+					seekTo = int(c.recv(send_size).strip('-'))
+				got = c.recv(send_size).strip('-')
+				print got
+				if(got=="size"):
+					readSize = int(c.recv(send_size).strip('-'))
+				print 'willsend'
+				c.send(send_text('willsend'))
+				print "seek = ",seekTo,"  size= ",readSize
+				FiletoSend.seek(seekTo)
+				toSend = FiletoSend.read(readSize)
+				print len(toSend)
+				print c.sendall(toSend)
 def uploader():
 	hostname = gethostname()
 	ip =  gethostbyname(hostname)
