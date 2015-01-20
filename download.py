@@ -92,10 +92,7 @@ class downloader:  #Class to handle downloads.
 		else:
 			return 0
 	
-	def __del__(self):
-		quit_send = "quit"+"-"*(send_size-4)
-		for peer in self.peers:
-			peer.send(quit_send)
+	
 	
 ips = ["192.168.0.5",]
 hash = "24be595dea1df611285e8f2c15f44b19cc4faa9d"

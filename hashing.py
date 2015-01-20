@@ -1,26 +1,35 @@
 from os import listdir
 from os.path import isfile,join,getmtime
 import hashlib,time
-
+from sys import platform as _platform
+if _platform == "linux" or _platform == "linux2":
+	hash_path = "/droplet/dpl/hashes"
+	pathfordroplet = "/droplet/"
+elif _platform == "darwin":
+	hash_path = "/droplet/dpl/hashes"
+	pathfordroplet = "/droplet/"
+elif _platform == "win32":
+	pathfordroplet = "C:/droplet/"
+	hash_path = "C:/droplet/dpl/hashes.txt"
 def rehash():
-	pathfordroplet = "C:/droplet"
-	files=[ f for f in listdir(pathfordroplet) if isfile(join(pathfordroplet,f))]
-	files=[ "C:/droplet/" + f for f in files]
+	files=[ f for f in listdir(pathfordroplet[:-1]) if isfile(join(pathfordroplet[:-1],f))]
+	files=[ pathfordroplet + f for f in files]
 
 	if files:
 		print "Rehashing"
 		#hashing
 		for file in files:
 			a= sha1_hash(file)
-			with open("C:\droplet\dpl\hashes.txt","a+") as writehash:
+			with open(hash_path,"a+") as writehash:
 				writehash.write("\n"+a +"~"+file)
 		print "Done Rehashing"
 	else:
-		print "Aww, We can't find your droplet. Download files using the droplet website -\n\t\t\t xxx.xxx.xxx.xxx"
+		print "Aww, We can't find your droplet. Download files using the droplet website "
 		quit()
 
 def sha1_hash(file):
 	BLOCKSIZE = 65536
+	print file
 	hasher = hashlib.sha1()
 	with open(file, 'rb') as afile:
 		buf = afile.read(BLOCKSIZE)
@@ -32,13 +41,13 @@ def sha1_hash(file):
 	
 def file_change(pathfordroplet):
 	try:
-		read_name =	open("C:\droplet\dpl\hashes.txt","r+")
+		read_name =	open(hash_path,"r+")
 	except:
 		return False
 	names= read_name.read().splitlines()
 	names = [name.split("~")[1] for name in names if "~" in name]
 	files=[ f for f in listdir(pathfordroplet) if isfile(join(pathfordroplet,f))]
-	files=[ "C:/droplet/" + f for f in files]
+	files=[ pathfordroplet + f for f in files]
 	if set(names)==set(files):
 		return False
 	else:
@@ -52,8 +61,8 @@ def file_change(pathfordroplet):
 			print "filemod"
 			file = files[0]
 			hash = sha1_hash(file)
-			del_line_file("C:\droplet\dpl\hashes.txt",hash)
-			with open("C:\droplet\dpl\hashes.txt","a+") as writehash:
+			del_line_file(hash_path,hash)
+			with open(hash_path,"a+") as writehash:
 				writehash.write(hash+"~"+file+"\n")
 			print "ends"
 		else:
@@ -63,11 +72,11 @@ def file_change(pathfordroplet):
 					names.remove(x)
 				except:
 					pass
-			f = open("C:\droplet\dpl\hashes.txt","r")
+			f = open(hash_path,"r")
 			lines= f.read().splitlines()
 			f.close()
 			
-			f = open("C:\droplet\dpl\hashes.txt","w")
+			f = open(hash_path,"w")
 			for line in lines:
 				if line=="":
 					f.write("\n")
@@ -87,13 +96,13 @@ def del_line_file(file,hashtoDel):
 while True:
 	
 	try:
-		hfile=open("C:\droplet\dpl\hashes.txt","r+")
+		hfile=open(hash_path,"r+")
 	except:
-		hfile=open("C:\droplet\dpl\hashes.txt","w+")
+		hfile=open(hash_path,"w+")
 	lines =  hfile.read().splitlines()
 	hfile.close()
 	if lines:
-		file_change("C:/droplet")
+		file_change(pathfordroplet)
 	else:
 		rehash()
 	time.sleep(0.001)

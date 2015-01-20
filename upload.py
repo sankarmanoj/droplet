@@ -6,8 +6,15 @@ import sys
 s= socket()
 port = 12345
 send_size = 500
+from sys import platform as _platform
+	if _platform == "linux" or _platform == "linux2":
+		hash_path = "/droplet/dpl/hashes"
+	elif _platform == "darwin":
+		hash_path = "/droplet/dpl/hashes"
+	elif _platform == "win32":
+		hash_path = "C:/droplet/dpl/hashes.txt"
 def update_hashes():
-	file = open('C:/droplet/dpl/hashes.txt','r')
+	file = open(hash_path,'r')
 	hashes = file.read().splitlines()[1:]
 	hashes= [hash.split('~') for hash in hashes]
 	file.close()
