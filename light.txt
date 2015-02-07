@@ -1,0 +1,32 @@
+from socket import *
+from threading import thread
+from serial import Serial
+toAr = Serial('/dev/ttyACM0',9600)
+value = "100"
+server = socket()
+server.bind(('',12321))
+server.listen(5)
+send_size=500
+def send_text(input):
+                input_text = str(input)
+                send_text = input_text + "-"*(send_size-len(input_text))
+                return send_text
+def handler(c):
+        while True:
+                data = c.recv(send_size).strip('-')
+                print data
+                global value
+                global toAr
+                if "value" in data:
+                        value = (data.split("=")[-1]
+                        toSend = value + "~"
+                        toAr.write(toSend)
+                if "request" in data:
+                        c.send(send_text(value))
+
+while True:
+        c,addr = server.accept()
+        Thread(target=handler(c)).start()
+
+
+

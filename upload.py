@@ -7,12 +7,12 @@ s= socket()
 port = 12345
 send_size = 500
 from sys import platform as _platform
-	if _platform == "linux" or _platform == "linux2":
-		hash_path = "/droplet/dpl/hashes"
-	elif _platform == "darwin":
-		hash_path = "/droplet/dpl/hashes"
-	elif _platform == "win32":
-		hash_path = "C:/droplet/dpl/hashes.txt"
+if _platform == "linux" or _platform == "linux2":
+	hash_path = "/droplet/dpl/hashes"
+elif _platform == "darwin":
+	hash_path = "/droplet/dpl/hashes"
+elif _platform == "win32":
+	hash_path = "C:/droplet/dpl/hashes.txt"
 def update_hashes():
 	file = open(hash_path,'r')
 	hashes = file.read().splitlines()[1:]
@@ -67,11 +67,11 @@ def handler(c):
 				c.send(send_text('ready'))
 				FiletoSend = open(path,'rb')
 				got = c.recv(send_size).strip('-')
-				print got
+				print "got = ",got
 				if(got=="seek"):
 					seekTo = int(c.recv(send_size).strip('-'))
 				got = c.recv(send_size).strip('-')
-				print got
+				print "got = ",got
 				if(got=="size"):
 					readSize = int(c.recv(send_size).strip('-'))
 				print 'willsend'

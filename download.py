@@ -17,7 +17,7 @@ class downloader:  #Class to handle downloads.
 	elif _platform == "darwin":
 		path = "/droplet/"
 	elif _platform == "win32":
-		path = "C:\\droplet\\"   #Path to store files in 
+		path = "C:\\droplet_alpha\\"   #Path to store files in 
 	
 	def __init__(self,ips,hash):
 		self.hash = hash
@@ -57,6 +57,7 @@ class downloader:  #Class to handle downloads.
 			self.pieces.append([0,self.file_size])
 		self.pieces[-1][-1]=self.file_size
 		print self.pieces
+		return len(self.pieces)
 	def down_file(self,id_num,peer_num=0):                              #gets the piece from a peer. 
 		peer = self.peers[peer_num]										#pass the piece number and the peer number
 		peer.send(send_text("init_download"))
@@ -91,22 +92,4 @@ class downloader:  #Class to handle downloads.
 					break
 		else:
 			return 0
-	
-	
-	
-ips = ["192.168.0.5",]
-hash = "24be595dea1df611285e8f2c15f44b19cc4faa9d"
-file1 = downloader(ips,hash)
-file1.get_info()
 
-print file1.file_name
-print file1.file_size
-file1.open_file()
-file1.down_file(0)
-print "got 0"
-file1.down_file(1)
-print "got 1"
-file1.down_file(2)
-print "done"
-		
-	

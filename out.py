@@ -4,7 +4,6 @@ import time
 import sys
 import timeit
 from threading import Thread
-from time import sleep
 rport = 25555
 sport=25556
 my_ip = ""
@@ -14,18 +13,9 @@ if "sha1_hash" in uri:
 	hash = uri.partition("=")[-1]
 else:
 	hash = "**HASH**"
-print "Searching for file with hash :" + hash
-class client:
-	def __init__(self,ip):
-		self.s = socket()
-		self.s.connect((ip,12345))
-		print self.s.recv(1024)
-	def get_file_info(ip,theHash):	
-		self.s.send("info")
-		sleep(0.05)
-		self.s.send(theHash)
-		self.file_size = int(s.recv(1000))
-		self.file_name = s.recv(1000)
+if __name__=="__main":
+	print "Searching for file with hash :" + hash
+
 def config():
 	try:
 		file = open("C:/droplet/dpl/networks.txt  ", "r+")
@@ -55,7 +45,7 @@ def find(networks):
 
 def meet(drop_uri,send_hash):
 	finder = socket(AF_INET, SOCK_DGRAM)
-	finder.bind(('', sport))
+	finder.bind(('', sport))	
 	start = time.time()
 	data = "t"
 	global running
@@ -84,32 +74,4 @@ def meet(drop_uri,send_hash):
 	print "Exit meet"
 	return avail_ip
 	finder.close()
-def down_into(file,toServer,start,end):
-	file.seek(start)
-	toServer.send("start="+str(start))
-	sleep(0.01)
-	toServer.send("end="+ str(end))
-	data = toServer.recv(10000000)
-	file.write(data)
-	return len(data)
-def get_file_info(ip,theHash):
-	
-	print s.recv(1023)
-	s.send("info")
-	sleep(0.05)
-	s.send(theHash)
-	file_size = int(s.recv(1000))
-	file_name = s.recv(1000)
-	if(file_size=="0"):
-		return 0
-	return (s,file_name,file_size)
-networks = config()
 
-i = Thread(target = find, args= (networks,))
-i.start()
-ips= meet(uri,hash)
-for x in range(0,len(ips)):
-	download(ips[x],hash,x,len(ips))
-else:
-	print "File Not Found"
-sleep(3)
