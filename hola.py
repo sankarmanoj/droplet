@@ -43,21 +43,21 @@ data = ""
 ips = nfile.read().splitlines()
 nfile.close()
 
-while data != "q":
+while data != "quitbutremembertorestart":
     data, addr = a.recvfrom(1024)
     if "drop" in data and "sha1_hash" in data:
         hash = data.partition("=")[-1]
         print "Received hash request for ", hash
-        hashes = update_hashes()		
+        hashes = update_hashes()	#Gets list of hashes in the local computer
         if hash in hashes:
             print "File available"
             a.sendto("available:"+hash,(addr[0],sport))
         else:
             print "File not available"
-    if (data == "alive"):
+    if (data == "alive"):		
         print "Got Alive"
         a.sendto("alive", (addr[0], sport))
-        add_ip(addr[0],ips)
+        add_ip(addr[0],ips)		#Is this needed, except for error correction?
 
 a.close()
 

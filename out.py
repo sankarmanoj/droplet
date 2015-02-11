@@ -1,11 +1,10 @@
-
 from socket import *
 import time
 import sys
 import timeit
 from threading import Thread
 rport = 25555
-sport=25556
+sport = 25556
 my_ip = ""
 count = 0
 uri = sys.argv[-1]
@@ -13,10 +12,10 @@ if "sha1_hash" in uri:
 	hash = uri.partition("=")[-1]
 else:
 	hash = "**HASH**"
-if __name__=="__main":
-	print "Searching for file with hash :" + hash
+if __name__=="__main":						#If this script is being run directly without being called by some other code.
+	print "Searching for file with hash : " + hash
 
-def config():
+def nafinder():
 	try:
 		file = open("C:/droplet/dpl/networks.txt  ", "r+")
 	except:
@@ -75,3 +74,4 @@ def meet(drop_uri,send_hash):
 	return avail_ip
 	finder.close()
 
+#Example URI : drop:sha1_hash=6be88cd386da58689bbc1a16f6d08309ce5b5fae
