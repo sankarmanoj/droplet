@@ -82,13 +82,15 @@ def handler(c):
 				print len(toSend)
 				print c.sendall(toSend)
 def uploader():
-	hostname = gethostname()
-	ip =  gethostbyname(hostname)
+#	hostname = gethostname()
+#	ip =  gethostbyname(hostname)		### I had Vmnet8 enabled and its ip was stored. Problem.
+	ip = "10.3.1.175"
 	s.bind((ip,12345))
 	s.listen(5)
 	while True:
 		c,addr= s.accept()
-		handler(c)
+		print "Someone has connected"
+		handler(c)				#c is the client who has connected.
 		print "Done handling"
 		
 uploader()

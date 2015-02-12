@@ -108,12 +108,12 @@ def send_text(input):
 
 class downloader:  #Class to handle downloads.
 	peers = []  	#List of socket objects
-	if _platform == "linux" or _platform == "linux2":	#Path where downloaded files go
+	if _platform == "linux" or _platform == "linux2":	#'path' where downloaded files go. 'path' is also 'self.path'?
 		path = "/droplet/"
 	elif _platform == "darwin":
 		path = "/droplet/"
 	elif _platform == "win32":
-		path = "C:\\droplet_alpha\\"    
+		path = "C:\\droplet_alpha\\"
 	def __init__(self,ips,hash):
 		self.hash = hash
 		for ip in ips:
@@ -123,10 +123,9 @@ class downloader:  #Class to handle downloads.
 				self.peers.append(s)
 			except:
 				ips.remove(ip)
-				if not ips:	#Checking if ips is empty
+				if not ips:		#Checking if ips is empty
 					print "No peers currently uploading file."
 					sys.exit(0)
-	
 	def get_info(self):   	#Get the name, and size of the file using the hash
 		info_send ="info" 	# Maybe we can get the name from the web server
 		info_send = info_send + "-"*(send_size-len(info_send))
@@ -140,7 +139,8 @@ class downloader:  #Class to handle downloads.
 		
 	def open_file(self):
 		self.pieces = []													#Opens the file for writing
-		self.piece_number = len(self.peers)									#Creates a list called pieces which stores start and stop 
+		self.piece_number = len(self.peers)									
+		#Creates a list called pieces which stores start and stop 
 		try:
 			self.file = open(self.path + self.file_name,"rb+")					#positions for downloading the file in pieces
 		except:
@@ -149,10 +149,12 @@ class downloader:  #Class to handle downloads.
 		if(self.piece_size>314572800):
 			self.piece_number=int(self.file_size/314572800)+1
 			self.piece_size=314572800
-		for x in range(0,self.piece_number):
-			self.pieces.append([x*self.piece_size,(x+1)*self.piece_size])
 		if(self.piece_number==1):
 			self.pieces.append([0,self.file_size])
+		else:
+			for x in range(0,self.piece_number):
+				self.pieces.append([x*self.piece_size,(x+1)*self.piece_size])
+		
 		self.pieces[-1][-1]=self.file_size
 		print self.pieces
 		return len(self.pieces)
