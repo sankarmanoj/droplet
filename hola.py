@@ -23,7 +23,7 @@ def add_ip(ip, ips):
         return True
     else:
         return False
-def update_hashes():
+def uhashes():
     try:
         hfile = open(hash_path,"r+")
     except:
@@ -48,7 +48,7 @@ while data != "q":
     if "drop" in data and "sha1_hash" in data:
         hash = data.partition("=")[-1]
         print "Received hash request for ", hash
-        hashes = update_hashes()		
+        hashes = uhashes()		
         if hash in hashes:
             print "File available"
             a.sendto("available:"+hash,(addr[0],sport))

