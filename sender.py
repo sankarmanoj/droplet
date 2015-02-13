@@ -4,31 +4,22 @@ import os
 import sys
 from threading import Thread
 from sys import platform as _platform
-if _platform == "linux" or _platform == "linux2":
-    hash_path = "/droplet/dpl/hashes"
-    network_path = "/droplet/dpl/networks"
-    pathfordroplet = "/droplet/"
-elif _platform == "darwin":
-    hash_path = "/droplet/dpl/hashes"
-    network_path = "/droplet/dpl/networks"
-    pathfordroplet = "/droplet/"
-elif _platform == "win32":
-    pathfordroplet = "C:/droplet/"
-    hash_path = "C:/droplet/dpl/hashes.txt"
-    network_path ="C:/droplet/dpl/networks.txt"
-    ip_path = "C:/droplet/dpl/ip.txt"
+if _platform == "win32":
+	pathfordroplet = "C:/droplet/"
+	system_folder = "C:\\Program Files (x86)\\droplet\\"
+	hash_path =  "C:\\droplet\\config\\hashes"
+	network_path = "C:\\droplet\\config\\networks"
+else:
+		print "Platform Not Supported"
+		print "Multi-platform support will be added soon"
+		print "Contact us for further information"
+		sleep(10)
+		sys.exit(0)
 rport = 25555
 sport = 25556
 s= socket()
 port = 12345
 send_size = 500
-def add_ip(ip, ips):
-    if (ip not in ips):
-        with open(ip_path, "a") as myfile:
-            myfile.write(ip + "\n")
-        return True
-    else:
-        return False
 def uhashes():
     try:
         hfile = open(hash_path,"r+")
@@ -48,7 +39,6 @@ def UDP_Listener():
 	data = ""
 	ips = nfile.read().splitlines()
 	nfile.close()
-
 	while True:
 		data, addr = a.recvfrom(1024)
 		if "drop" in data and "sha1_hash" in data:
@@ -63,7 +53,7 @@ def UDP_Listener():
 		if (data == "alive"):
 			print "Got Alive"
 			a.sendto("alive", (addr[0], sport))
-			add_ip(addr[0],ips)
+			
 def update_hashes():
 	file = open(hash_path,'r')
 	hashes = file.read().splitlines()[1:]
@@ -78,8 +68,9 @@ def send_text(input):
 def handler(c):
 	sent = 0
 	path = ""
+	command = "input"
 	available = False
-	while True:
+	while command != "":
 		command = c.recv(send_size).strip('-')
 		if(command ==""):
 			break
@@ -133,13 +124,11 @@ def handler(c):
 				print len(toSend)
 				print c.sendall(toSend)
 def uploader():
-	hostname = gethostname()
-	ip =  gethostbyname(hostname)
-	s.bind((ip,12345))
+	s.bind(("",12345))
 	s.listen(5)
 	while True:
 		c,addr= s.accept()
-		handler(c)
+		Thread(target=handler(c)).start()
 		print "Done handling"
 Thread(target = UDP_Listener).start()
 uploader()

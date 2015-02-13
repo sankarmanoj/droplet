@@ -16,20 +16,17 @@ sport = 25556
 uri = sys.argv[-1]
 running = True
 send_size = 500
-
-if _platform == "linux" or _platform == "linux2":
-    hash_path = "/droplet/dpl/hashes"
-    network_path = "/droplet/dpl/networks"
-    pathfordroplet = "/droplet/"
-elif _platform == "darwin":
-    hash_path = "/droplet/dpl/hashes"
-    network_path = "/droplet/dpl/networks"
-    pathfordroplet = "/droplet/"
-elif _platform == "win32":
-    pathfordroplet = "C:/droplet/"
-    hash_path = "C:/droplet/dpl/hashes.txt"
-    network_path ="C:/droplet/dpl/networks.txt"
-    ip_path = "C:/droplet/dpl/ip.txt"
+if _platform == "win32":
+	pathfordroplet = "C:/droplet/"
+	system_folder = "C:\\Program Files (x86)\\droplet\\"
+	hash_path =  "C:\\droplet\\config\\hashes"
+	network_path = "C:\\droplet\\config\\networks"
+else:
+		print "Platform Not Supported"
+		print "Multi-platform support will be added soon"
+		print "Contact us for further information"
+		sleep(10)
+		sys.exit(0)
 
 
 if "sha1_hash" in uri:
@@ -37,17 +34,20 @@ if "sha1_hash" in uri:
 else:
 	hash = "**HASH**"
 	
-if __name__=="__main__":	#If file is run directly from prompt and not imported
-	print "\nSearching for file with hash :" + hash + '\n'
-
 '''Function Definitions start
 '''
 
 def nafinder():				#Returns all possible network addresses
 	try:
-		file = open("C:/droplet/dpl/networks.txt", "r+")
+		file = open(network_path, "r+")
 	except:
-		file = open("C:/droplet/dpl/networks.txt", "w+")
+		print "Error - Networks file not found"
+		print "Please create a file called 'networks' in the directory ",system_folder
+		print "Contact us if the problem persists"
+		for x in range(0,10):
+			print ".",
+			sleep(1)
+		sys.exit(0)
 	networks = []
 	data = "adf"
 	while data != "":
@@ -108,12 +108,7 @@ def send_text(input):
 
 class downloader:  #Class to handle downloads.
 	peers = []  	#List of socket objects
-	if _platform == "linux" or _platform == "linux2":	#'path' where downloaded files go. 'path' is also 'self.path'?
-		path = "/droplet/"
-	elif _platform == "darwin":
-		path = "/droplet/"
-	elif _platform == "win32":
-		path = "C:\\droplet_alpha\\"
+	path=pathfordroplet
 	def __init__(self,ips,hash):
 		self.hash = hash
 		for ip in ips:
@@ -126,15 +121,19 @@ class downloader:  #Class to handle downloads.
 				if not ips:		#Checking if ips is empty
 					print "No peers currently uploading file."
 					sys.exit(0)
-	def get_info(self):   	#Get the name, and size of the file using the hash
+	def get_info(self,peer_num=0):   	#Get the name, and size of the file using the hash
 		info_send ="info" 	# Maybe we can get the name from the web server
 		info_send = info_send + "-"*(send_size-len(info_send))
-		self.peers[0].send(info_send)
+		self.peers[peer_num].send(info_send)
 		hash_send = self.hash + "-"*(send_size-len(self.hash))
-		self.peers[0].send(hash_send)
-		self.file_size = int(self.peers[0].recv(send_size).strip('-'))
-		self.file_name = self.peers[0].recv(send_size).strip('-')
+		self.peers[peer_num].send(hash_send)
+		self.file_size = int(self.peers[peer_num].recv(send_size).strip('-'))
+		if(self.file_size==0):
+			print "File Not available"
+		self.file_name = self.peers[peer_num].recv(send_size).strip('-')
+		
 		print self.file_size," got info"
+		return self.file_size
 	
 		
 	def open_file(self):
@@ -211,9 +210,10 @@ if len(ips)==0:
 else:
 	getter = downloader(ips,hash)
 	getter.get_info()
+	temp=getter.file_size
 	num_pieces = getter.open_file()
 	if(len(ips)>1):
-		if not (getter.file_size==getter.get_info(1)):
+		if not (temp==getter.get_info(1)):
 			print "Error in syncing with other peers"
 			print "Please contact an administrator if this problem persists"
 			print "#Error in File Size Sync"
@@ -225,10 +225,4 @@ else:
 		peer_num+=1
 		if peer_num >= len(getter.peers):
 			peer_num = 0 
-
-			
-			
-			
-
-#Example URI : drop:sha1_hash=6be88cd386da58689bbc1a16f6d08309ce5b5fae
-#Example for shubh : drop:sha1_hash=680327857ee663080d77389be4497c2b68fca650		
+		

@@ -10,7 +10,7 @@ elif _platform == "darwin":
 	pathfordroplet = "/droplet/"
 elif _platform == "win32":
 	pathfordroplet = "C:/droplet/"
-	hash_path = "C:/droplet/dpl/hashes.txt"
+	hash_path = "C:/droplet/config/hashes.txt"
 def rehash():
 	files=[ f for f in listdir(pathfordroplet[:-1]) if isfile(join(pathfordroplet[:-1],f))]
 	files=[ pathfordroplet + f for f in files]
