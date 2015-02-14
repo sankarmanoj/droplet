@@ -4,6 +4,12 @@ from os.path import isfile,join,getmtime
 import hashlib,time
 from time import sleep
 from sys import platform as _platform
+
+
+Release_Version = "1"
+
+
+
 if _platform == "win32":
 	pathfordroplet = "C:/droplet/"
 	system_folder = "C:\\Program Files (x86)\\droplet\\"

@@ -1,0 +1,1 @@
+error 17 : Tell them to close all folders where droplet is open(Should've automatically closed by now So just tell them to run the installer again!)

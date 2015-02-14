@@ -1,4 +1,5 @@
 #sys.path.append(os.path.abspath(pathfordroplet[:-1])) ###Uncomment when necessary###sys.path is where python checks when importing various modules
+#Hash passed must be like : drop:sha1_hash=6be88cd386da58689bbc1a16f6d08309ce5b5fae&VERSION_NUMBER
 
 import sys
 from sys import platform as _platform
@@ -10,6 +11,9 @@ from time import sleep, time
 
 '''Variable Definitions start
 '''
+
+Release_Version = "1"
+
 
 rport = 25555
 sport = 25556
@@ -30,7 +34,8 @@ else:
 
 
 if "sha1_hash" in uri:
-	hash = uri.partition("=")[-1]
+	hash = uri.partition("=")[-1].partition("&")[0]
+	current_version=uri.partition("&")[-1]
 else:
 	hash = "**HASH**"
 	
@@ -192,37 +197,55 @@ class downloader:  #Class to handle downloads.
 		else:
 			return 0
 
-
-networks = nafinder()
-i1 = Thread(target = find, args= (networks,))
-i1.start()
-ips= meet(uri,hash)
-if(len(ips)<2):
-	i2 = Thread(target = find, args = (networks,))
-	i2.start()
-	ips+= meet(uri,hash)
-ips = list(OrderedDict.fromkeys(ips))	#To remove duplicates from ips
-if len(ips)==0:
-	print "No Peers Found"
-	print "Please try again later, or contact an administrator if this problem persists"
-	sleep(10)
-	sys.exit(0)
-else:
-	getter = downloader(ips,hash)
-	getter.get_info()
-	temp=getter.file_size
-	num_pieces = getter.open_file()
-	if(len(ips)>1):
-		if not (temp==getter.get_info(1)):
-			print "Error in syncing with other peers"
-			print "Please contact an administrator if this problem persists"
-			print "#Error in File Size Sync"
+verison = "0"
+ver_cnt = socket(SOCK_DGRAM,AF_INET)
+addr = ("localhost",rport)
+ver_cnt.settimeout(0.5)
+while version=="0":
+	try:
+		ver_cnt.sendto("vrequest",addr)
+		version,addr = ver_cnt.recvfrom(100)
+		if version=="-1":
+			print "There is a fatal error in the code that is never expected to happen. Please contact an administrator and say ERROR IN RUN. It is very important to correct this error now and in further releases"
 			sleep(10)
 			sys.exit(0)
-	peer_num = 0 
-	for x in range(0,num_pieces):		
-		Thread(target = getter.down_file(x,peer_num)).start()
-		peer_num+=1
-		if peer_num >= len(getter.peers):
-			peer_num = 0 
-		
+	except:
+		#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"",shell=True)
+		#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\sender.exe\"",shell=True)
+		sleep(0.5)
+	
+if version==current_version:
+	networks = nafinder()
+	i1 = Thread(target = find, args= (networks,))
+	i1.start()
+	ips= meet(uri,hash)
+	if(len(ips)<2):
+		i2 = Thread(target = find, args = (networks,))
+		i2.start()
+		ips+= meet(uri,hash)
+	ips = list(OrderedDict.fromkeys(ips))	#To remove duplicates from ips
+	if len(ips)==0:
+		print "No Peers Found"
+		print "Please try again later, or contact an administrator if this problem persists"
+		sleep(10)
+		sys.exit(0)
+	else:
+		getter = downloader(ips,hash)
+		getter.get_info()
+		temp=getter.file_size
+		num_pieces = getter.open_file()
+		if(len(ips)>1):
+			if not (temp==getter.get_info(1)):
+				print "Error in syncing with other peers"
+				print "Please contact an administrator if this problem persists"
+				print "#Error in File Size Sync"
+				sleep(10)
+				sys.exit(0)
+		peer_num = 0 
+		for x in range(0,num_pieces):		
+			Thread(target = getter.down_file(x,peer_num)).start()
+			peer_num+=1
+			if peer_num >= len(getter.peers):
+				peer_num = 0
+else:
+	print "CRITICAL ERROR... Please install the latest version of Droplet."
