@@ -3,7 +3,7 @@ import getpass
 import MySQLdb as msd
 import hashlib,time
 password = getpass.getpass("Enter the password")
-con = msd.connect('192.168.0.101','admin',password,'droplet')
+con = msd.connect('192.168.0.100','admin',password,'droplet')
 name = raw_input("Enter the name")
 path = raw_input("Enter the path")
 path = path.strip('"')

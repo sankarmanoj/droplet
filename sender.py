@@ -3,6 +3,7 @@ from time import sleep
 import os
 import sys
 from threading import Thread
+import cPickle as pickle
 from sys import platform as _platform
 if _platform == "win32":
 	pathfordroplet = "C:/droplet/"
@@ -21,14 +22,9 @@ s= socket()
 port = 12345
 send_size = 500
 def uhashes():
-    try:
-        hfile = open(hash_path,"r+")
-    except:
-        hfile = open(hash_path,"w+")
-    hashes = hfile.read().splitlines()
-    hfile.close()
-    hashes = [new.partition("~")[0] for new in hashes]
-    return hashes
+		hashes = pickle.load(open(hash_path,"rb+"))
+		hash = [h[0] for h in hashes]
+		return hash
 def UDP_Listener():
 	try:
 		nfile = open(network_path,"r+")
@@ -55,12 +51,11 @@ def UDP_Listener():
 			a.sendto("alive", (addr[0], sport))
 			
 def update_hashes():
-	file = open(hash_path,'r')
-	hashes = file.read().splitlines()[1:]
-	hashes= [hash.split('~') for hash in hashes]
-	file.close()
-	print hashes
-	return hashes
+	try:
+		hashes = pickle.load(open(hash_path,"rb+"))
+		return hashes
+	except:
+		pass
 def send_text(input):
 		input_text = str(input)
 		send_text = input_text + "-"*(send_size-len(input_text))
