@@ -4,7 +4,9 @@
 import sys
 from sys import platform as _platform
 import os
+import subprocess
 from threading import Thread
+import csv
 from collections import OrderedDict
 from socket import *
 from time import sleep, time
@@ -34,14 +36,37 @@ else:
 
 
 if "sha1_hash" in uri:
-	hash = uri.partition("=")[-1].partition("&")[0]
-	current_version=uri.partition("&")[-1]
+	hash = uri.partition("?")[0].partition("=")[-1]
+	current_version=uri.partition("?")[-1].partition("=")[-1]
+	print "Current Verson ",current_version
+	print hash
+	if current_version != Release_Version:
+		
+		print " Please Update "
+		print " This is not the latest version"
+		sleep(10)
+		sys.exit(0)
 else:
-	hash = "**HASH**"
+	print "Hash not recived"
+	print "Exitting Program"
+	sleep(3)
+	sys.exit(0)
 	
 '''Function Definitions start
 '''
-
+def check_sender():
+	p_tasklist = subprocess.Popen('tasklist.exe /fo csv',stdout=subprocess.PIPE,universal_newlines=True)
+	num =0
+	for p in csv.DictReader(p_tasklist.stdout):
+		if p['Image Name'] == 'sender.exe':
+			num+=1
+	if num ==1:
+		return True
+	elif num ==0:
+		return False
+	else:
+		subprocess.call('taskkill /f /im sender.exe',shell = True)
+		return False
 def nafinder():				#Returns all possible network addresses
 	try:
 		file = open(network_path, "r+")
@@ -197,11 +222,14 @@ class downloader:  #Class to handle downloads.
 		else:
 			return 0
 
-verison = "0"
+version = "0"
 ver_cnt = socket(SOCK_DGRAM,AF_INET)
 addr = ("localhost",rport)
+times = 0
 ver_cnt.settimeout(0.5)
-while version=="0":
+while True:
+	if times > 5:
+		break
 	try:
 		ver_cnt.sendto("vrequest",addr)
 		version,addr = ver_cnt.recvfrom(100)
@@ -209,10 +237,13 @@ while version=="0":
 			print "There is a fatal error in the code that is never expected to happen. Please contact an administrator and say ERROR IN RUN. It is very important to correct this error now and in further releases"
 			sleep(10)
 			sys.exit(0)
+		if version =="1":
+			break
 	except:
-		#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"",shell=True)
-		#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\sender.exe\"",shell=True)
-		sleep(0.5)
+		if not check_sender():
+			os.system('start /b /d "C:\Program Files (x86)\droplet" sender.exe')
+			sleep(0.5)
+	times +=1
 	
 if version==current_version:
 	networks = nafinder()

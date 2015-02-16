@@ -46,7 +46,7 @@ def pickhashchecker(now=0):
 		if (now==1 or (now==0 and time()-start>3600)):
 			if not check_pick():
 				try:
-					subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"",shell=True)
+					os.system("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"")
 					start=time()
 					return True
 				except:
@@ -75,7 +75,7 @@ def UDP_Listener():
 			else:
 				a.sendto("-1",addr)
 		if "drop" in data and "sha1_hash" in data:
-			hash = data.partition("=")[-1]
+			hash = data.partition("?")[0].partition("=")[-1]
 			print "Received hash request for ", hash
 			hashes = uhashes()		
 			if hash in hashes:
