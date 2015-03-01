@@ -34,8 +34,8 @@ else:
 
 
 if "sha1_hash" in uri:
-	hash = uri.partition("=")[-1].partition("&")[0]
-	current_version=uri.partition("&")[-1]
+	hash = uri.partition("?")[0].partition("=")[-1]
+	current_version=uri.partition("=")[-1]
 else:
 	hash = "**HASH**"
 	
@@ -210,8 +210,7 @@ while version=="0":
 			sleep(10)
 			sys.exit(0)
 	except:
-		#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"",shell=True)
-		#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\sender.exe\"",shell=True)
+		subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\sender.exe\"",shell=True)
 		sleep(0.5)
 	
 if version==current_version:

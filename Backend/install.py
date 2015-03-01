@@ -38,7 +38,7 @@ except OSError as e:
 				shutil.rmtree(path)
 			except IOError as e:
 				print "Error. Installation Failed"
-				print "Try re-running the install file. This error might be resolved!"
+				print "Try re-running the install file as an ADMINISTRATOR. This error might be resolved!"
 				print "If the error persists please contact an administrator and say ERROR NUMBER 1 and error "+str(e.errno)+". It is very important to correct this error now and in further releases"
 				sleep(10)
 				sys.exit(0)
