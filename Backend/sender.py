@@ -46,7 +46,7 @@ def pickhashchecker(now=0):
 		if (now==1 or (now==0 and time()-start>3600)):
 			if not check_pick():
 				try:
-					subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"",shell=True)
+					os.system("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"")
 					start=time()
 					return True
 				except:

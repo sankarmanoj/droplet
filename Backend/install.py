@@ -29,32 +29,8 @@ except OSError as e:
 		sleep(10)
 		sys.exit(0)
 		pass
-	elif e.errno==errno.EEXIST:
-		os.system("cls")
-		print "DROPLET FOLDER ALREADY EXISTS!\n\n If you still want to continue with the installation then BACKUP ALL YOUR DROPLET DOWNLOADED MOVIES, etc. as they will be lost.\n"
-		conformation=raw_input("Be sure and type 'yes' when you want to continue. (Nothing else will be accepted) : ");
-		if conformation.lower()=="yes":
-			try:
-				shutil.rmtree(path)
-			except IOError as e:
-				print "Error. Installation Failed"
-				print "Try re-running the install file as an ADMINISTRATOR. This error might be resolved!"
-				print "If the error persists please contact an administrator and say ERROR NUMBER 1 and error "+str(e.errno)+". It is very important to correct this error now and in further releases"
-				sleep(10)
-				sys.exit(0)
-			try:
-				os.makedirs(path)
-			except:
-				print "Error. Installation Failed"
-				print "Please contact an administrator and say ERROR NUMBER 2 and error "+str(e.errno)+". It is very important to correct this error now and in further releases"
-				sleep(10)
-				sys.exit(0)
-		else:
-			print "Thanks! Bye!"
-			sleep(3)
-			sys.exit(0)
 try:
-	os.makedirs(config)#By this point you are already admin but just tot be safe... and lazy.
+	os.makedirs(config)#By this point you are already admin but just to be safe... and lazy.
 except OSError as e:
 	if e.errno ==5 or e.errno==13:
 		print "Installation Failed 2"
@@ -63,10 +39,9 @@ except OSError as e:
 		sys.exit(0)
 		pass
 	else:
-		print "Error. Installation Failed"
+		print "Error. "
 		print "Please contact an administrator and say ERROR NUMBER 3 and error "+str(e.errno)+". It is very important to correct this error now and in further releases"
-		sleep(10)
-		sys.exit(0)
+		sleep(1)
 ret = ctypes.windll.kernel32.SetFileAttributesW(ur"C:\\droplet\\config",FILE_ATTRIBUTE_HIDDEN)
 if ret ==0:
 	raise ctypes.WinError()
@@ -123,9 +98,9 @@ _winreg.SetValueEx(stkey,"Droplet_hashing",0,_winreg.REG_SZ,'"'+system_folder+'h
 #os.system("bckgsender.vbs")###subprocess is better
 
 ###REmove and run
-#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"",shell=True)
-#subprocess.call("start /b \"\" \"C:\\Program Files (x86)\\droplet\\sender.exe\"",shell=True)
-
+os.system("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"")
+os.system("start /b \"\" \"C:\\Program Files (x86)\\droplet\\sender.exe\"")
+shutil.copy("exp.bat",os.environ['appdata']+r"\Microsoft\Windows\Start Menu\Programs\Startup")
 print "Installation Success"
 print "Start downloading files from the website! Please remember to allow firewall access to the programs when they run for the first time"
 sleep(10)
