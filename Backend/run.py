@@ -1,15 +1,15 @@
 #sys.path.append(os.path.abspath(pathfordroplet[:-1])) ###Uncomment when necessary###sys.path is where python checks when importing various modules
-#Hash passed must be like : drop:sha1_hash=6be88cd386da58689bbc1a16f6d08309ce5b5fae&VERSION_NUMBER
+#Hash passed must be like : drop:sha1_hash=78715ff4b5ae858dcaf797efefe364e4861a380b?version=1
 
 import sys
-from sys import platform as _platform
 import os
 import subprocess
-from threading import Thread
 import csv
-from collections import OrderedDict
+import cPickle
+import collections
+import time
+import threading
 from socket import *
-from time import sleep, time
 
 '''Variable Definitions start
 '''
@@ -22,7 +22,7 @@ sport = 25556
 uri = sys.argv[-1]
 running = True
 send_size = 500
-if _platform == "win32":
+if sys.platform == "win32":
 	pathfordroplet = "C:/droplet/"
 	system_folder = "C:\\Program Files (x86)\\droplet\\"
 	hash_path =  "C:\\droplet\\config\\hashes"
@@ -31,25 +31,34 @@ else:
 		print "Platform Not Supported"
 		print "Multi-platform support will be added soon"
 		print "Contact us for further information"
-		sleep(10)
+		time.sleep(10)
 		sys.exit(0)
 
 
 if "sha1_hash" in uri:
 	hash = uri.partition("?")[0].partition("=")[-1]
 	current_version=uri.partition("?")[-1].partition("=")[-1]
-	print "Current Verson ",current_version
+	print "Current Version ",current_version
 	print hash
+	hashes = cPickle.load(open(hash_path,"rb+"))
+	for hasha in hashes:
+		if hasha[0] == hash:
+			path = hasha[1]
+			name = os.path.split(path)[-1]
+			print "\nThe file is already available at : "+path
+			print "The movie's name as stored by you is : "+name.partition(".")[0]
+			time.sleep(10)
+			sys.exit(0)
 	if current_version != Release_Version:
 		
 		print " Please Update "
 		print " This is not the latest version"
-		sleep(10)
+		time.sleep(10)
 		sys.exit(0)
 else:
-	print "Hash not recived"
-	print "Exitting Program"
-	sleep(3)
+	print "Hash not received"
+	print "Exiting Program"
+	time.sleep(3)
 	sys.exit(0)
 	
 '''Function Definitions start
@@ -76,7 +85,7 @@ def nafinder():				#Returns all possible network addresses
 		print "Contact us if the problem persists"
 		for x in range(0,10):
 			print ".",
-			sleep(1)
+			time.sleep(1)
 		sys.exit(0)
 	networks = []
 	data = "adf"
@@ -102,12 +111,12 @@ def find(networks):		#Sends "alive" to all ip addresses using their network addr
 def meet(drop_uri,send_hash):
 	finder = socket(AF_INET, SOCK_DGRAM)
 	finder.bind(('', sport))	
-	start = time()
+	start = time.time()
 	data = "t"
 	global running
 	avail_ip=[]
 	print "Loop started"
-	while (time() - start) < 10 and running:
+	while (time.time() - start) < 10 and running:
 		try:
 			finder.settimeout(10)
 			data, addr = finder.recvfrom(1024)
@@ -205,7 +214,7 @@ class downloader:  #Class to handle downloads.
 		reply = peer.recv(send_size).strip('-')
 		print reply
 		if(reply == "willsend"):
-			sleep(5)
+			time.sleep(5)
 			recieved = 0
 			self.file.seek(start)
 			print "Downloading ..."
@@ -227,6 +236,9 @@ ver_cnt = socket(SOCK_DGRAM,AF_INET)
 addr = ("localhost",rport)
 times = 0
 ver_cnt.settimeout(0.5)
+
+os.startfile(os.path.join(os.getcwd(),"droplet.exe"))
+
 while True:
 	if times > 5:
 		break
@@ -235,30 +247,30 @@ while True:
 		version,addr = ver_cnt.recvfrom(100)
 		if version=="-1":
 			print "There is a fatal error in the code that is never expected to happen. Please contact an administrator and say ERROR IN RUN. It is very important to correct this error now and in further releases"
-			sleep(10)
+			time.sleep(10)
 			sys.exit(0)
-		if version =="1":
+		if version ==Release_Version:
 			break
 	except:
 		if not check_sender():
-			os.system('start /b /d "C:\Program Files (x86)\droplet" sender.exe')
-			sleep(0.5)
+			os.startfile(os.path.join(os.getcwd(),"droplet.exe"))
+			time.sleep(0.5)
 	times +=1
 	
 if version==current_version:
 	networks = nafinder()
-	i1 = Thread(target = find, args= (networks,))
+	i1 = threading.Thread(target = find, args= (networks,))
 	i1.start()
 	ips= meet(uri,hash)
 	if(len(ips)<2):
-		i2 = Thread(target = find, args = (networks,))
+		i2 = threading.Thread(target = find, args = (networks,))
 		i2.start()
 		ips+= meet(uri,hash)
-	ips = list(OrderedDict.fromkeys(ips))	#To remove duplicates from ips
+	ips = list(collections.OrderedDict.fromkeys(ips))	#To remove duplicates from ips
 	if len(ips)==0:
 		print "No Peers Found"
 		print "Please try again later, or contact an administrator if this problem persists"
-		sleep(10)
+		time.sleep(10)
 		sys.exit(0)
 	else:
 		getter = downloader(ips,hash)
@@ -270,11 +282,11 @@ if version==current_version:
 				print "Error in syncing with other peers"
 				print "Please contact an administrator if this problem persists"
 				print "#Error in File Size Sync"
-				sleep(10)
+				time.sleep(10)
 				sys.exit(0)
 		peer_num = 0 
 		for x in range(0,num_pieces):		
-			Thread(target = getter.down_file(x,peer_num)).start()
+			threading.Thread(target = getter.down_file(x,peer_num)).start()
 			peer_num+=1
 			if peer_num >= len(getter.peers):
 				peer_num = 0

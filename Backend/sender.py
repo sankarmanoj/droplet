@@ -1,17 +1,16 @@
-from socket import *
-from time import sleep,time
 import os
 import sys
-from threading import Thread
-from sys import platform as _platform
-import cPickle as pickle
 import subprocess
 import csv
+import time
+import cPickle
+import threading
+from socket import *
 
 Release_Version = "1"
 
 
-if _platform == "win32":
+if sys.platform == "win32":
 	pathfordroplet = "C:/droplet/"
 	system_folder = "C:\\Program Files (x86)\\droplet\\"
 	hash_path =  "C:\\droplet\\config\\hashes"
@@ -20,14 +19,14 @@ else:
 		print "Platform Not Supported"
 		print "Multi-platform support will be added soon"
 		print "Contact us for further information"
-		sleep(10)
+		time.sleep(10)
 		sys.exit(0)
 rport = 25555
 sport = 25556
 s = socket()
 port = 12345
 send_size = 500
-start=time()
+start=time.time()
 
 def check_pick():
 	p_tasklist = subprocess.Popen('tasklist.exe /fo csv',stdout=subprocess.PIPE,universal_newlines=True)
@@ -43,18 +42,18 @@ def check_pick():
 		subprocess.call('taskkill /f /im pickhash.exe',shell = True)
 		return False
 def pickhashchecker(now=0):
-		if (now==1 or (now==0 and time()-start>3600)):
+		if (now==1 or (now==0 and time.time()-start>3600)):
 			if not check_pick():
 				try:
-					os.system("start /b \"\" \"C:\\Program Files (x86)\\droplet\\pickhash.exe\"")
-					start=time()
+					os.startfile(os.path.join(os.getcwd(),"droplet.exe"))
+					start=time.time()
 					return True
 				except:
 					return False
 			else:
 				return True	
 def uhashes():
-	hashes = pickle.load(open(hash_path,"rb+"))
+	hashes = cPickle.load(open(hash_path,"rb+"))
 	hash = [h[0] for h in hashes]
 	return hash
 def UDP_Listener():
@@ -89,7 +88,7 @@ def UDP_Listener():
 			
 def update_hashes():
 	try:
-		hashes = pickle.load(open(hash_path,"rb+"))
+		hashes = cPickle.load(open(hash_path,"rb+"))
 		return hashes
 	except:
 		pass
@@ -125,7 +124,7 @@ def handler(c):
 			
 			if not available:
 				c.send("0")
-				sleep(0.1)
+				time.sleep(0.1)
 				c.send("0")
 		if(command=="quit"):
 			c.close()
@@ -160,9 +159,9 @@ def uploader():
 	s.listen(5)
 	while True:
 		c,addr= s.accept()
-		Thread(target=handler(c)).start()
+		threading.Thread(target=handler(c)).start()
 		print "Done handling"
-Thread(target = UDP_Listener).start()
+threading.Thread(target = UDP_Listener).start()
 uploader()
 
 

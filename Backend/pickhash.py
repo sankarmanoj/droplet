@@ -1,16 +1,15 @@
+import os
+import sys
+import time
+import hashlib
 import cPickle as pickle
-from os import listdir
-from os.path import isfile,join,getmtime
-import hashlib,time
-from time import sleep
-from sys import platform as _platform
 
 
 Release_Version = "1"
 
 
 
-if _platform == "win32":
+if sys.platform == "win32":
 	pathfordroplet = "C:/droplet/"
 	system_folder = "C:\\Program Files (x86)\\droplet\\"
 	hash_path =  "C:\\droplet\\config\\hashes"
@@ -19,10 +18,10 @@ else:
 		print "Platform Not Supported"
 		print "Multi-platform support will be added soon"
 		print "Contact us for further information"
-		sleep(10)
+		time.sleep(10)
 		sys.exit(0)
 def get_files():
-	files=[pathfordroplet+f for f in listdir(pathfordroplet) if isfile(join(pathfordroplet,f))]
+	files=[pathfordroplet+f for f in os.listdir(pathfordroplet) if os.path.isfile(os.path.join(pathfordroplet,f))]
 	return files
 def sha1_hash(file):
 	BLOCKSIZE = 65536
@@ -85,6 +84,6 @@ def check_update():
 
 while True:
 	check_update()
-	sleep(0.01)
+	time.sleep(0.01)
 
 	
