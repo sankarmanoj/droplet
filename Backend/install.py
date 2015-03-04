@@ -42,10 +42,9 @@ except OSError as e:
 	elif e.errno==17:
 		try:
 			print "You have droplet previously installed. Clearing up in 5 seconds"
-			time.sleep(2)
 			os.startfile(os.path.join(os.getcwd(),"killall.exe"))
 			print "All ready. Installing now..."
-			time.sleep(3)
+			time.sleep(5)
 			shutil.rmtree(system_folder)
 			os.makedirs(system_folder)
 		except OSError as newe:
@@ -152,9 +151,6 @@ rkey = _winreg.OpenKey(_winreg.HKEY_CLASSES_ROOT,r'drop',0,_winreg.KEY_WRITE)
 _winreg.SetValue(rkey,r"shell\open\command",_winreg.REG_SZ,'"'+system_folder+'run.exe" "%1"')
 _winreg.SetValue(rkey,"",_winreg.REG_SZ,"URL:drop Protocol")
 _winreg.SetValueEx(rkey,"URL Protocol",0,_winreg.REG_SZ,"")
-stkey = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE,"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",0,_winreg.KEY_ALL_ACCESS)
-_winreg.SetValueEx(stkey,"Droplet_sender",0,_winreg.REG_SZ,'"'+system_folder+'sender.exe"')
-_winreg.SetValueEx(stkey,"Droplet_hashing",0,_winreg.REG_SZ,'"'+system_folder+'hashing.exe"')
 
 shutil.copy("droplet.exe",os.environ['appdata']+r"\Microsoft\Windows\Start Menu\Programs\Startup")
 os.startfile(system_folder+"droplet.exe")

@@ -45,7 +45,7 @@ def pickhashchecker(now=0):
 		if (now==1 or (now==0 and time.time()-start>3600)):
 			if not check_pick():
 				try:
-					os.startfile(os.path.join(os.getcwd(),"droplet.exe"))
+					os.startfile(system_folder+"droplet.exe")
 					start=time.time()
 					return True
 				except:
