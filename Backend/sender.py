@@ -1,10 +1,10 @@
-import os
-import sys
-import subprocess
-import csv
-import time
 import cPickle
+import csv
+import os
+import subprocess
+import sys
 import threading
+import time
 from socket import *
 
 Release_Version = "1"
@@ -39,7 +39,7 @@ def check_pick():
 	elif num ==0:
 		return False
 	else:
-		subprocess.call('taskkill /f /im pickhash.exe',shell = True)
+		subprocess.call('taskkill /f /im pickhash.exe',shell = True, stdout=subprocess.PIPE)
 		return False
 def pickhashchecker(now=0):
 		if (now==1 or (now==0 and time.time()-start>3600)):

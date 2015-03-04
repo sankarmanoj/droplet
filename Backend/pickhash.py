@@ -1,8 +1,8 @@
+import cPickle
+import hashlib
 import os
 import sys
 import time
-import hashlib
-import cPickle as pickle
 
 
 Release_Version = "1"
@@ -46,10 +46,10 @@ def full_hash():
 	write_hashes(hashes)
 	return hashes
 def write_hashes(hashes):
-	pickle.dump(hashes,open(hash_path,"wb+"))
+	cPickle.dump(hashes,open(hash_path,"wb+"))
 def read_hashes():
 	try:
-		hashes = pickle.load(open(hash_path,"rb+"))
+		hashes = cPickle.load(open(hash_path,"rb+"))
 		return hashes
 	except:
 		return full_hash()

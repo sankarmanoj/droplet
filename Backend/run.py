@@ -1,14 +1,14 @@
 #sys.path.append(os.path.abspath(pathfordroplet[:-1])) ###Uncomment when necessary###sys.path is where python checks when importing various modules
 #Hash passed must be like : drop:sha1_hash=78715ff4b5ae858dcaf797efefe364e4861a380b?version=1
 
-import sys
-import os
-import subprocess
-import csv
 import cPickle
 import collections
-import time
+import csv
+import os
+import subprocess
+import sys
 import threading
+import time
 from socket import *
 
 '''Variable Definitions start
@@ -74,7 +74,7 @@ def check_sender():
 	elif num ==0:
 		return False
 	else:
-		subprocess.call('taskkill /f /im sender.exe',shell = True)
+		subprocess.call('taskkill /f /im sender.exe',shell = True, stdout=subprocess.PIPE)
 		return False
 def nafinder():				#Returns all possible network addresses
 	try:

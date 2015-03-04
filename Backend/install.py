@@ -1,10 +1,22 @@
+import _winreg
+import ctypes
+import errno
 import os
 import shutil
 import sys
-import _winreg
-import errno
-import ctypes
 import time
+
+
+###Unneeded imports to facilitate py2exe
+import cPickle
+import collections
+import csv
+import hashlib
+import socket
+import subprocess
+import threading
+###
+
 
 FILE_ATTRIBUTE_HIDDEN = 0x02
 
@@ -140,7 +152,7 @@ rkey = _winreg.OpenKey(_winreg.HKEY_CLASSES_ROOT,r'drop',0,_winreg.KEY_WRITE)
 _winreg.SetValue(rkey,r"shell\open\command",_winreg.REG_SZ,'"'+system_folder+'run.exe" "%1"')
 _winreg.SetValue(rkey,"",_winreg.REG_SZ,"URL:drop Protocol")
 _winreg.SetValueEx(rkey,"URL Protocol",0,_winreg.REG_SZ,"")
-stkey= _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE,"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",0,_winreg.KEY_ALL_ACCESS)
+stkey = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE,"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",0,_winreg.KEY_ALL_ACCESS)
 _winreg.SetValueEx(stkey,"Droplet_sender",0,_winreg.REG_SZ,'"'+system_folder+'sender.exe"')
 _winreg.SetValueEx(stkey,"Droplet_hashing",0,_winreg.REG_SZ,'"'+system_folder+'hashing.exe"')
 

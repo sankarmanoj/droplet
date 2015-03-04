@@ -1,5 +1,5 @@
-import subprocess
 import csv
+import subprocess
 
 def killall():
 	p_tasklist = subprocess.Popen('tasklist.exe /fo csv',stdout=subprocess.PIPE,universal_newlines=True)
